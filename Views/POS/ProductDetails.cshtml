@@ -1,0 +1,60 @@
+﻿@model SalesApp.Models.Product
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "_PosLayout";
+}
+
+
+
+    <div class="content container-fluid">
+
+        <div class="row">
+            <div class="col-sm-4 col-4">
+                <h4 class="page-title">Details</h4>
+            </div>
+            <div class="col-sm-8 col-8 text-right m-b-20">
+                <a asp-action="ProductList" asp-controller="POS" asp-route-catId="@Model.CategoryId"  asp-route-subCatId="@Model.SubCategoryId" class="btn btn-primary btn-rounded pull-right"><i class="fa fa-mail-reply"></i> back to products</a>
+
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="product-view">
+                        <div class="proimage-wrap">
+                            <div class="pro-image" id="pro_popup">
+                                <a href="#">
+                                    <img class="img-fluid" src="~/Uploads/products/@(System.IO.Path.GetFileName(Model.ImageUrl))" alt="">
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="product-info">
+                        <h2>@Model.Name</h2>
+                        <p>Product ID: @Model.Id</p>
+
+                        <p class="product_price">‎₦@Model.PurchasePrice</p>
+                        <p><b>Availability:</b> In Stock</p>
+                        <div>
+                            <form asp-action="OrderList" asp-controller="POS" asp-route-productId="@Model.Id" asp-route-amount="@Model.PurchasePrice"
+                                  asp-route-subCatId="@Model.SubCategoryId" asp-route-catId="@Model.CategoryId">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-shopping-cart"></i> Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+

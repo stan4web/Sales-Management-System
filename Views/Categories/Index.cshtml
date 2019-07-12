@@ -1,0 +1,52 @@
+﻿@model IEnumerable<SalesApp.Models.Category>
+
+@{
+    ViewData["Title"] = "Index";
+    int sn = 1;
+}
+
+    <div class="col-lg-10">
+        <div class="card-box">
+            <div class="card-block">
+                <a asp-action="Create">Add New</a>
+                <h4 class="card-title">Category List</h4>
+                <div class="table-responsive">
+                    <table class="table m-b-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                               
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@(sn++)</td>
+                                    <td>
+                                        <img src="~/Uploads/Categories/@(System.IO.Path.GetFileName(item.ImageUrl))" style="width:70px" />
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>

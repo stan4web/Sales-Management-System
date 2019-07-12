@@ -1,0 +1,170 @@
+﻿@model SalesApp.Models.Product
+@inject SalesApp.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "Edit";
+    var subcategory = _context.SubCategories.FirstOrDefault(x => x.Id == Model.SubCategoryId);
+    ViewBag.Subcategory = subcategory.Name;
+    ViewBag.SubcategoryId = subcategory.Id;
+}
+
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h4 class="page-title">Add Product</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <form asp-action="Edit" asp-controller="Products" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="RegisteredDate" />
+                <input type="hidden" asp-for="ImageUrl" />
+                <input type="hidden" asp-for="ProductStatus" />
+
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input asp-for="Name" class="form-control" type="text">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>Product Images</label>
+                    <div>
+                        <input class="form-control" type="file" name="file" onchange="readURL(this);">
+                        <small class="form-text text-muted">Max. file size: 50 MB. Allowed images: jpg, gif, png. Maximum 10 images only.</small>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-3 col-sm-3 col-4 col-lg-3 col-xl-2">
+                            <div class="product-thumbnail">
+                                <img id="blah" src="~/Uploads/Products/@(System.IO.Path.GetFileName(Model.ImageUrl))" class="img-thumbnail img-fluid" alt="">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Product Category</label>
+                            <select asp-for="CategoryId" asp-items="@ViewBag.CategoryId" class="form-control" id="categorylist">
+                                <option>Select</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Product Sub Category</label>
+                            <select asp-for="SubCategoryId" class="form-control" id="subcategorylist">
+                                <option value="@ViewBag.SubcategoryId">@ViewBag.Subcategory</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input asp-for="Quantity" class="form-control" type="number" />
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="display:flex">
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Purchase Price</label>
+                                <input asp-for="PurchasePrice" class="form-control" type="number" />
+                                <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Selling Price</label>
+                                <input asp-for="SalingPrice" class="form-control" type="number" />
+                                <span asp-validation-for="SalingPrice" class="text-danger"></span>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Product Description</label>
+                    <textarea asp-for="Description" cols="30" rows="6" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Product Re-order Level <small>Optional</small></label>
+                    <input asp-for="ReOrderLevel" class="form-control" />
+                    <span asp-validation-for="ReOrderLevel" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>Expiring Date <small>Optional</small></label>
+                    <input asp-for="ExpirationDate" type="date" class="form-control" />
+                    <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="display-block">Product Status</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="ProductStatus" id="product_active" value="option1" checked>
+                        <label class="form-check-label" for="product_active">
+                            Active
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="ProductStatus" id="product_inactive" value="option2">
+                        <label class="form-check-label" for="product_inactive">
+                            Inactive
+                        </label>
+                    </div>
+                </div>
+                <div class="m-t-20 text-center">
+                    <button class="btn btn-primary btn-lg">Publish Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah')
+                        .attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+     
+        //Bind City dropdownlist
+        $("#categorylist").change(function () {
+            var categoryId = $("#categorylist").val();
+            var url = "/Products/GetCategoryList";
+
+            $.getJSON(url, { CategoryId: categoryId }, function (data) {
+                var item = "";
+                $("#subcategorylist").empty();
+                $.each(data, function (i, subcategory) {
+                    item += '<option value="' + subcategory.value + '">' + subcategory.text + '</option>'
+                });
+                $("#subcategorylist").html(item);
+            });
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

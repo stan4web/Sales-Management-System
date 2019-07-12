@@ -1,0 +1,324 @@
+@using Microsoft.AspNetCore.Identity
+@using SalesApp.Models
+@inject SalesApp.Data.ApplicationDbContext _context
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var userDetails = _context.Users.FirstOrDefault(x => x.UserName == User.Identity.Name);
+    var order = _context.Orders.Where(x => x.OrderReferenceId == userDetails.Id).ToList();
+    decimal discount = 0;
+    if(order.Count()> 0)
+    {
+        var customername = _context.Receipts.FirstOrDefault(x => x.ReceiptNumber == order.FirstOrDefault().ReceiptNumber);
+        var getdiscount = _context.AccountStatements.FirstOrDefault(x => x.ReceiptNumber == order.FirstOrDefault().ReceiptNumber);
+        if(customername != null)
+        {
+            ViewBag.CustomerName = customername.CustomerName;
+        }
+
+        if(getdiscount != null)
+        {
+            discount = getdiscount.Discount;
+        }
+       
+    }
+}
+<link href="~/css/site.css" rel="stylesheet" />
+
+<style>
+    .ebutton {
+        background-color: rgba(228, 202, 202, 0.00);
+        border: none;
+        color: #000000;
+        padding: 0px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 10px;
+        text-align: center;
+        margin: 4px 2px;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+        cursor: pointer;
+        vertical-align: top;
+        height: 15px;
+    }
+</style>
+<script>
+    function sync() {
+        var n1 = document.getElementById('n1');
+        var n2 = document.getElementById('n2');
+
+        n2.value = n1.value;
+    }
+
+/**/</script>
+<div class="col-12">
+    <div class="blog grid-blog">
+
+        <div >
+            <div id="printableArea">
+
+                <div id="invoice-POS">
+
+                    <center id="top">
+                        <div class="blog-image">
+                            <a href="#" style="text-align:center"><img class="img-fluid" src="~/images/ms-logo.png" style="width:160px;margin-left:auto;margin-right:auto" alt=""></a>
+                        </div>
+
+                       
+                    </center><!--End InvoiceTop-->
+
+                    <div id="mid">
+                        <div class="info">
+                            <h4>
+                                Receipt No: @if (order.Count() > 0)
+                                {
+                                    <input type="text" name="n1" id="n1" onkeyup="sync()" value="@order.FirstOrDefault().ReceiptNumber" style="border: none;" readonly>
+                                }
+                            </h4>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Customer Name" id="customername" value="@ViewBag.CustomerName"><br />
+                                @if (discount > 0)
+                                {
+                                    <input type="number" name="receiptnumber" id="d1" style="" onkeyup="sync2()" onchange="sync2()" class="form-control" placeholder="Discount" value="@discount" />
+                                }
+                                else
+                                {
+                                    <input type="number" name="receiptnumber" id="d1" style="" onkeyup="sync2()" onchange="sync2()" class="form-control" placeholder="Discount" />
+                                }
+
+
+
+                            </div>
+                        </div>
+                    </div><!--End Invoice Mid-->
+
+                    <div>
+                        <table id="table">
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>SubTotal</th>
+                                <th></th>
+                            </tr>
+
+                            @foreach (var prod in order.OrderByDescending(s => s.Id))
+                            {
+                                var getproduct = _context.Products.FirstOrDefault(x => x.Id == prod.ProductId);
+                                var subt = prod.Quantity * getproduct.SalingPrice;
+                                ViewBag.SubCategoryId = getproduct.SubCategoryId;
+                                ViewBag.CategoryId = getproduct.CategoryId;
+                                <tr class="service">
+                                    <td style="text-wrap:none;overflow:hidden;">@getproduct.Name</td>
+
+                                    <td>@getproduct.SalingPrice</td>
+
+                                    <td>
+                                        <div style="display:flex">
+
+                                            <div>
+                                                <form asp-action="RemoveQty" asp-controller="POS" asp-route-subCatId="@getproduct.SubCategoryId" asp-route-catId="@getproduct.CategoryId"
+                                                      asp-route-id="@prod.Id" asp-route-amount="@getproduct.SalingPrice" asp-route-receiptnumber="@ViewBag.ReceiptSession">
+                                                    <button class="ebutton" title="Reduce qty"><i class="fa fa-minus"></i></button>
+                                                </form>
+                                            </div>
+                                            <div style="margin-left:3px;margin-right:3px;font-size:1.5em; padding-left:3px;padding-right:3px">@prod.Quantity</div>
+                                            <div>
+                                                <form asp-action="AddQty" asp-controller="POS" asp-route-subCatId="@getproduct.SubCategoryId" asp-route-catId="@getproduct.CategoryId"
+                                                      asp-route-id="@prod.Id" asp-route-amount="@getproduct.SalingPrice" asp-route-receiptnumber="@ViewBag.ReceiptSession">
+                                                    <button class="ebutton" title="Add qty"><i class="fa fa-plus"></i></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@subt</td>
+                                    <td style="text-align:left">
+                                        <form asp-action="OrderDelete" asp-controller="POS" asp-route-subCatId="@ViewBag.SubCategoryId" asp-route-catId="@ViewBag.CategoryId"
+                                              asp-route-id="@prod.Id" asp-route-receiptnumber="@ViewBag.ReceiptSession">
+                                            <button type="submit" class="link"><i class="fa fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                            }
+
+                            <tr class="tableitem">
+                                <td></td>
+                                <td></td>
+                                <td>Total: </td>
+                                <td>
+                                    @if (order.Count() > 0)
+                                    {
+
+                                        <input type="text" name="total" id="total" readonly style="border:none;font-size:18px;width:80px" value="@order.Sum(x => x.Amount)" />
+                                    }
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Discount: </td>
+                                <td>
+                                    @if (discount > 0)
+                                    {
+                                        <input type="text" name="discount" id="d2" readonly style="border:none;font-size:18px;width:80px" value="@discount" />
+                                    }
+                                    else
+                                    {
+                                        <input type="text" name="discount" id="d2" readonly style="border:none;font-size:18px;width:80px" value="0" />
+                                    }
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Payable: </td>
+                                <td>
+                                    @if (order.Count() > 0)
+                                    {
+
+                                        <input type="text" name="Payable" id="payable" readonly style="border:none;font-size:18px;width:80px" value="@order.Sum(x => x.Amount)" />
+                                    }
+                                </td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                        <div id="legalcopy">
+                            <p class="legal">
+                                <strong>Thank you for your Patronage !</strong>  Note: No refund of money after payment.
+                            </p>
+                        </div>
+
+                    </div><!--End InvoiceBot-->
+                </div><!--End Invoice-->
+
+               
+
+                
+            </div>
+
+            <hr />
+            <script>
+                function sync2() {
+                    var d1 = document.getElementById('d1');
+                    var d2 = document.getElementById('d2');
+                    var total = document.getElementById('total');
+                    var payable = document.getElementById('payable');
+                    var customername = document.getElementById('customername');
+                    var customername2 = document.getElementById('customername2');
+                    var amount = document.getElementById('amount');
+                    var newdiscount = document.getElementById('newdiscount');
+                    var newpayable = document.getElementById('newpayable');
+
+                    d2.value = d1.value;
+                    payable.value = total.value - d2.value;
+                    newdiscount.value = d2.value;
+                    newpayable.value = payable.value;
+                    customername2.value = customername.value;
+                    amount.value = total.value;
+
+                    if (d1.value == 0 || d1.value == isNaN) {
+                        d2.value = 0;
+                        newdiscount.value = 0;
+                    }
+                }
+            </script>
+            
+            <div class="text-center">
+                <p class="text-success" style="font-size:18px">@TempData["payment"]</p>
+                <p class="text-danger" style="font-size:18px">@TempData["paymentError"] </p>
+                <table>
+                    <tr class="text-white">
+                        <td>
+                            <form asp-action="ClearOrderList" asp-controller="POS" asp-route-subCatId="@ViewBag.SubCategoryId" asp-route-catId="@ViewBag.CategoryId" asp-route-receiptnumber="@ViewBag.ReceiptSession">
+                                <button type="submit" class="btn btn-block btn-warning  text-white"><i class="fa fa-trash text-white"></i> Clear</button>
+                            </form>
+
+                        </td>
+                        <td>
+
+                            <!--Payment-->
+                            <button type="button" class="btn btn-block btn-success  text-white" data-toggle="modal" data-target="#exampleModalCenter" onclick="sync()" onkeypress="sync2()">
+                                <i class="fa fa-money text-white"></i> Payment
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" onmouseover="sync2()" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="false">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <form asp-action="Payment" asp-controller="POS" asp-route-subCatId="@ViewBag.SubCategoryId" asp-route-catId="@ViewBag.CategoryId" asp-route-receiptnumber="@ViewBag.ReceiptSession">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">Make Payment</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" style="color:#000000">
+                                                <table class="table">
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Total Amount</th>
+                                                        <th>Payable Amount</th>
+                                                        <th>Discount</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" name="customername" value="N/A" id="customername2" style="border:none;font-size:18px;width:120px" readonly></td>
+
+                                                        <td><input type="text" name="amount" placeholder="" id="amount" style="border:none;font-size:18px;width:70px" readonly></td>
+
+                                                        <td> <input type="text" name="Payable" id="newpayable" readonly style="border:none;font-size:18px;width:70px;background-color:rgba(0, 0, 0, 0.00)" value="@order.Sum(x => x.Amount)" /></td>
+                                                        <td><input type="text" name="discount" id="newdiscount" readonly style="border:none;font-size:18px;width:70px" value="0" /></td>
+                                                    </tr>
+                                                </table>
+
+                                                <input type="text" name="receiptnumber" id="n2" style="border: none; display:none" readonly />
+
+
+
+
+
+
+                                                <h4>you are about to submit this payment order.</h4>
+                                                <h2 class="text-danger">Are you sure?</h2>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-success">Submit </button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <a target="_blank" class="btn btn-block btn-primary text-white" @*onclick="printDiv('printableArea')"*@ asp-action="Print" asp-controller="POS"><i class="fa fa-print text-white"></i> Print</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+    }
+</script>
+

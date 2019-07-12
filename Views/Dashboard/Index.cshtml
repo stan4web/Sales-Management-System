@@ -1,0 +1,485 @@
+﻿@inject SalesApp.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "Index";
+    int spr = 1;
+    int psn = 1;
+    int rsn = 1;
+
+}
+
+    <div class="content container-fluid">
+        <div class="row">
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="dash-widget dash-widget5">
+                    <span class="dash-widget-icon bg-success"><i class="fa fa-money" aria-hidden="true"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@String.Format("{0:C}",ViewBag.DailyAccount) </h3>
+                        <span>Today</span>
+                       
+                    </div>
+                    <a asp-action="DailyTransactionDetails" asp-controller="Dashboard" style="float:right">View more details</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="dash-widget dash-widget5">
+                    <span class="dash-widget-icon bg-info"><i class="fa fa-money" aria-hidden="true"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@String.Format("{0:C}", ViewBag.WeeklyAccount)</h3>
+                        <span>This week</span>
+                    </div>
+                    <a asp-action="WeeklyTransactionDetails" asp-controller="Dashboard" style="float:right">View more details</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="dash-widget dash-widget5">
+                    <span class="dash-widget-icon bg-warning"><i class="fa fa-money"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@String.Format("{0:C}", ViewBag.MonthlyAccount)</h3>
+                        <span>This month</span>
+                    </div>
+                    <a asp-action="MonthlyTransactionDetails" asp-controller="Dashboard" style="float:right">View more details</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                <div class="dash-widget dash-widget5">
+                    <span class="dash-widget-icon bg-danger"><i class="fa fa-tasks" aria-hidden="true"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>@String.Format("{0:C}", ViewBag.TotalWorth)</h3>
+                        <span>Total worth  of goods in stock </span>
+                    </div>
+                    <a href="#" style="float:right">Inventory</a>
+                </div>
+            </div>
+        </div>
+       
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-table card-table-top">
+                    <div class="card-header bg-white">
+                        <h4 class="card-title m-b-0">Invoices</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table m-b-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Receipt Number</th>
+                                        <th>Customer Name</th>
+                                        <th>Date Issued</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var receipt in ViewBag.Receipt)
+                                    {
+                                        <tr>
+                                            <td>@(rsn++)</td>
+                                            <td><a asp-action="InvoiceView" asp-controller="Dashboard" asp-route-id="@receipt.ReceiptNumber">@receipt.ReceiptNumber</a></td>
+                                            <td>
+                                                <h2><a href="#">@receipt.CustomerName</a></h2>
+                                            </td>
+                                            <td>@String.Format("{0:ddd, MMM d, yyyy}", receipt.DateCreated)</td>
+                                            <td>₦@receipt.TotalAmount</td>
+                                            <td>
+                                                <span class="badge badge-success-border"> Paid</span>
+                                            </td>
+                                        </tr>
+                                    }
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center bg-white">
+                        <a href="#" class="text-muted">View all invoices</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card card-table card-table-top">
+                    <div class="card-header bg-white">
+                        <h4 class="card-title m-b-0">Payments</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table m-b-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>ReceiptNumber</th>
+                                        <th>TotalAmount</th>
+                                        <th>AdvancePaid</th>
+                                        <th>Discount</th>
+                                        <th>Balance</th>
+                                        <th>Payable</th>
+                                        @*<th>CashierName</th>*@
+
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach(var payment in ViewBag.Payment)
+                                    {
+                                        string id = payment.CashierName;
+                                        var userDetails = _context.Users.FirstOrDefault(x => x.Id == id);
+                                    <tr>
+                                        <td>@(psn++)</td>
+                                        <td><a href="#">@payment.ReceiptNumber</a></td>
+                                        <td>@payment.TotalAmount</td>
+                                        <td>@payment.AdvancePaid</td>
+                                        <td>@payment.Discount</td>
+                                        <td>@payment.Balance</td>
+                                        <td>@payment.Payable</td>
+                                        @*<td>@userDetails.Fullname</td>*@
+
+                                        <td>@String.Format("{0:ddd, MMM d, yyyy}", payment.DateCreated)</td>
+                                    </tr>
+                                    }
+                                    
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center bg-white">
+                        <a asp-action="PaymentView" asp-controller="Dashboard" title="view payment list" class="text-muted">View all payments</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card member-panel">
+                    <div class="card-header bg-white">
+                        <h4 class="card-title m-b-0">About to expire</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="contact-list">
+                            @foreach (var expir in ViewBag.GetEpiringDate)
+                            {
+
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a ><img src="~/Uploads/Products/@(System.IO.Path.GetFileName(expir.ImageUrl))" alt="" class="w-40 rounded"><span class="status online"></span></a>
+                                        </div>
+                                        <div class="contact-info">
+                                            <span class="contact-name text-ellipsis">@expir.Name</span>
+                                            <span class="contact-date">Best before @String.Format("{0:ddd, MMM d, yyyy}", expir.ExpirationDate)</span>
+
+                                        </div>
+
+                                    </div>
+                                </li>
+                            }
+
+
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center bg-white">
+                        <p style="font-size:18px;">Note: The above listed products will expired in  3 months time.</p>
+                    </div>
+                </div>
+            </div> 
+
+            <div class="col-md-6">
+                <div class="card member-panel">
+                    <div class="card-header bg-white">
+                        <h4 class="card-title m-b-0">Expired Products </h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="contact-list">
+                            @foreach (var expir in ViewBag.GetEpiredProduct)
+                            {
+
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a ><img src="~/Uploads/Products/@(System.IO.Path.GetFileName(expir.ImageUrl))" alt="" class="w-40 rounded"><span class="status offline"></span></a>
+                                        </div>
+                                        <div class="contact-info text-danger">
+                                            <span class="contact-name text-ellipsis">@expir.Name</span>
+                                            <span class="contact-date">Best before @String.Format("{0:ddd, MMM d, yyyy}", expir.ExpirationDate)</span>
+                                            <span class="contact-date">Quantity remaining @expir.Quantity</span>
+                                        </div>
+
+                                    </div>
+                                </li>
+                            }
+
+
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center bg-white">
+                        <p style="font-size:18px;color:#ff0000">Note: The above listed products has expired.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card member-panel">
+                        <div class="card-header bg-white">
+                            <h4 class="card-title m-b-0">Most Sale</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="contact-list">
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a href="profile.html" title="John Doe"><img src="assets/img/user.jpg" alt="" class="w-40 rounded-circle"><span class="status online"></span></a>
+                                        </div>
+                                        <div class="contact-info">
+                                            <span class="contact-name text-ellipsis">John Doe</span>
+                                            <span class="contact-date">Web Developer</span>
+                                        </div>
+                                        <div class="contact-action">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="dropdown-toggle action-icon" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="javascript:void(0)">Edit</a>
+                                                    <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a href="profile.html" title="Richard Miles"><img src="assets/img/user.jpg" alt="" class="w-40 rounded-circle"><span class="status offline"></span></a>
+                                        </div>
+                                        <div class="contact-info">
+                                            <span class="contact-name text-ellipsis">Richard Miles</span>
+                                            <span class="contact-date">Web Developer</span>
+                                        </div>
+                                        <div class="contact-action">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="dropdown-toggle action-icon" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="javascript:void(0)">Edit</a>
+                                                    <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a href="profile.html" title="John Doe"><img src="assets/img/user.jpg" alt="" class="w-40 rounded-circle"><span class="status away"></span></a>
+                                        </div>
+                                        <div class="contact-info">
+                                            <span class="contact-name text-ellipsis">John Doe</span>
+                                            <span class="contact-date">Web Developer</span>
+                                        </div>
+                                        <div class="contact-action">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="dropdown-toggle action-icon" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="javascript:void(0)">Edit</a>
+                                                    <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a href="profile.html" title="Richard Miles"><img src="assets/img/user.jpg" alt="" class="w-40 rounded-circle"><span class="status online"></span></a>
+                                        </div>
+                                        <div class="contact-info">
+                                            <span class="contact-name text-ellipsis">Richard Miles</span>
+                                            <span class="contact-date">Web Developer</span>
+                                        </div>
+                                        <div class="contact-action">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="dropdown-toggle action-icon" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="javascript:void(0)">Edit</a>
+                                                    <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a href="profile.html" title="John Doe"><img src="assets/img/user.jpg" alt="" class="w-40 rounded-circle"><span class="status offline"></span></a>
+                                        </div>
+                                        <div class="contact-info">
+                                            <span class="contact-name text-ellipsis">John Doe</span>
+                                            <span class="contact-date">Web Developer</span>
+                                        </div>
+                                        <div class="contact-action">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="dropdown-toggle action-icon" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="javascript:void(0)">Edit</a>
+                                                    <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="contact-cont">
+                                        <div class="pull-left user-img m-r-10">
+                                            <a href="profile.html" title="Richard Miles"><img src="assets/img/user.jpg" alt="" class="w-40 rounded-circle"><span class="status away"></span></a>
+                                        </div>
+                                        <div class="contact-info">
+                                            <span class="contact-name text-ellipsis">Richard Miles</span>
+                                            <span class="contact-date">Web Developer</span>
+                                        </div>
+                                        <div class="contact-action">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="dropdown-toggle action-icon" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="javascript:void(0)">Edit</a>
+                                                    <a class="dropdown-item" href="javascript:void(0)">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer text-center bg-white">
+                            <a href="users.html" class="text-muted">View all members</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card member-panel">
+                        <div class="card-header bg-white">
+                            <h4 class="card-title m-b-0">List of products to re-order</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="contact-list">
+                                @foreach (var reorder in ViewBag.ReorderLevel)
+                                {
+                                    <li>
+                                        <div class="contact-cont">
+                                            <div class="pull-left user-img m-r-10">
+                                                <a title="Re-order Now" asp-action="Edit" asp-controller="Products" asp-route-id="@reorder.Id" ><img src="~/Uploads/Products/@(System.IO.Path.GetFileName(reorder.ImageUrl))" alt="" class="w-40 rounded-circle"><span class="fa fa-plus-circle"></span></a>
+                                            </div>
+                                            <div class="contact-info">
+                                                <span class="contact-name text-ellipsis">@reorder.Name</span>
+                                                <span class="contact-date">@reorder.Quantity</span>
+                                            </div>
+                                            
+                                        </div>
+                                    </li>
+                                }
+
+
+                            </ul>
+                        </div>
+                        <div class="card-footer text-center bg-white">
+                            <a href="#" class="text-muted">View all members</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card card-table">
+                        <div class="card-header bg-white">
+                            <h4 class="card-title m-b-0">Cashier's</h4>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table m-b-0">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width:200px;">Name</th>
+                                        <th>Email</th>
+                                        <th>Phone Number</th>
+                                    </tr>
+                                </thead>
+                               
+                                <tbody>
+                                    @foreach (var cashier in ViewBag.Cashier)
+                                    {
+                                    <tr>
+                                        <td style="min-width:200px;">
+                                            <a href="#" class="avatar"><img src="~/Uploads/Passports/@(System.IO.Path.GetFileName(cashier.ImageUrl))" width="40" height="40" /></a>
+                                            <h2><a href="#">@cashier.Fullname </a></h2>
+                                        </td>
+                                        <td>@cashier.Email</td>
+                                        <td>@cashier.PhoneNumber</td>
+                                       
+                                    </tr>
+                                    }
+                                    
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer text-center bg-white">
+                            <a href="#" class="text-muted">View all clients</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card card-table">
+                        <div class="card-header bg-white">
+                            <h4 class="card-title m-b-0">Order List</h4>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table m-b-0">
+                                <thead>
+                                    <tr>
+
+                                        <th class="col-md-1">OrderReferenceId</th>
+                                        <th class="text-right  col-md-3">Amount </th>
+
+                                        <th class="text-right col-md-1">IsPaid</th>
+                                        <th class="text-right col-md-1">ProductId</th>
+                                        <th class="text-right col-md-1">Quantity</th>
+                                        <th class="text-right col-md-1">ReceiptNumber</th>
+                                        <th class="col-md-3">DateCreated</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach(var order in ViewBag.Order)
+                                    {
+                                        string id = order.OrderReferenceId;
+                                        var userDetails = _context.Users.FirstOrDefault(x => x.Id == id);
+
+                                    <tr>
+
+                                        <td class=" col-md-1">@userDetails.Fullname</td>
+                                        <td class=" text-right col-md-3">@order.Amount </td>
+
+                                        <td class="text-right col-md-1">@order.IsPaid</td>
+                                        <td class="text-right col-md-1">@order.ProductId</td>
+                                        <td class="text-right col-md-1">@order.Quantity</td>
+                                        <td class="text-right col-md-1">@order.ReceiptNumber</td>
+                                        <td class="col-md-3">@order.DateCreated</td>
+                                    </tr>
+                                    }
+                                    
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="projects.html" class="text-muted">View all projects</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    

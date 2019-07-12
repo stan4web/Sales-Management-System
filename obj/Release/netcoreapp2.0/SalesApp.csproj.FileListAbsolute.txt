@@ -1,0 +1,12 @@
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\bin\Release\netcoreapp2.0\SalesApp.deps.json
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\bin\Release\netcoreapp2.0\SalesApp.runtimeconfig.json
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\bin\Release\netcoreapp2.0\SalesApp.runtimeconfig.dev.json
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\bin\Release\netcoreapp2.0\SalesApp.dll
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\bin\Release\netcoreapp2.0\SalesApp.pdb
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\obj\Release\netcoreapp2.0\SalesApp.csprojAssemblyReference.cache
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\obj\Release\netcoreapp2.0\SalesApp.csproj.CoreCompileInputs.cache
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\obj\Release\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\obj\Release\netcoreapp2.0\SalesApp.AssemblyInfoInputs.cache
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\obj\Release\netcoreapp2.0\SalesApp.AssemblyInfo.cs
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\obj\Release\netcoreapp2.0\SalesApp.dll
+C:\Users\sibekwe\Documents\Visual Studio 2019\source\repo\SalesApp\obj\Release\netcoreapp2.0\SalesApp.pdb

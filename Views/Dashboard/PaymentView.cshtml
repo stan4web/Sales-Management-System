@@ -1,0 +1,135 @@
+﻿@model IEnumerable<SalesApp.Models.AccountStatement>
+@inject SalesApp.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "PaymentView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-sm-4 col-5">
+            <h4 class="page-title">Payments</h4>
+        </div>
+        <div class="col-sm-8 col-7 text-right m-b-30">
+            <a asp-action="Index" asp-controller="Dashboard" class="btn btn-primary btn-rounded pull-right" ><i class="fa fa-reply"></i> Dashboard</a>
+        </div>
+    </div>
+    <div class="row filter-row">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <label class="focus-label">Employee Name</label>
+                <input type="text" class="form-control floating">
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus select-focus">
+                <label class="focus-label">Role</label>
+                <select class="select floating">
+                    <option> -- Select -- </option>
+                    <option>Employee</option>
+                    <option>Manager</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus select-focus">
+                <label class="focus-label">Leave Status</label>
+                <select class="select floating">
+                    <option> -- Select -- </option>
+                    <option> Pending </option>
+                    <option> Approved </option>
+                    <option> Rejected </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <label class="focus-label">From</label>
+                <div class="cal-icon">
+                    <input class="form-control floating datetimepicker" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <label class="focus-label">To</label>
+                <div class="cal-icon">
+                    <input class="form-control floating datetimepicker" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <a href="#" class="btn btn-success btn-block"> Search </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped custom-table datatable">
+                    <thead>
+                        <tr>
+                            <th style="width:25%">Cashier Name</th>
+                            <th>Email</th>
+                            <th>TotalAmount</th>
+                            <th> CustomerName</th>
+                            <th>Payable</th>
+                            <th> Discount</th>
+                            <th>AdvancePaid</th>
+                            <th>Balance</th>
+                            <th>ReceiptNumber</th>
+                            <th>Profit</th>
+                            <th> DateCreated</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            var userDetails = _context.Users.FirstOrDefault(x => x.Id == item.CashierName);
+
+                            
+                           
+                            <tr>
+                                <td>
+                                    <a href="#" class="avatar">@userDetails.FirstName.Substring(0, 1)@userDetails.LastName.Substring(0, 1)</a>
+                                    <h2><a href="#">@userDetails.Fullname</a></h2>
+                                </td>
+                                <td><a href="#" class="__cf_email__">@userDetails.Email</a></td>
+
+                                <td>@String.Format("{0:C}", item.TotalAmount)</td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustomerName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Payable)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Discount)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.AdvancePaid)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Balance)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ReceiptNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Profit)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DateCreated)
+                                </td>
+                               
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

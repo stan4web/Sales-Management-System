@@ -1,0 +1,61 @@
+﻿@model IEnumerable<SalesApp.Models.Product>
+@inject SalesApp.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "ProductListAll";
+    Layout = "_PosLayout";
+}
+
+
+
+    <div class="content container-fluid">
+       
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-4 col-4">
+                    <h4 class="page-title">Products List</h4>
+                </div>
+                <div class="col-sm-8 col-8 text-right m-b-20">
+                    <a asp-action="Index" asp-controller="POS" class="btn btn-primary btn-rounded pull-right"><i class="fa fa-mail-reply"></i> back to categories</a>
+                </div>
+            </div>
+
+
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    var product = _context.Products.Where(x => x.SubCategoryId == item.Id);
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="product">
+                            <div class="product-inner">
+                                <a>
+                                    <img alt="alt" src="~/Uploads/Products/@(System.IO.Path.GetFileName(item.ImageUrl))" style="height:265px;">
+                                </a>
+                                <div class="cart-btns" style="text-align:center">
+
+                                    <form asp-action="OrderList" asp-controller="POS" asp-route-productId="@item.Id" asp-route-amount="@item.SalingPrice"
+                                          asp-route-subCatId="@item.SubCategoryId" asp-route-catId="@item.CategoryId" asp-route-page="All">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fa fa-shopping-cart"></i> Add to cart
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </div>
+                            <div class="pro-desc">
+                                <h5><a href="#">@item.Name</a></h5>
+                                <h5><a href="#">@item.Quantity in stock</a></h5>
+                                <div class="price"><sup>₦</sup>@item.SalingPrice</div>
+                                <a asp-action="ProductDetails" asp-controller="POS" asp-route-id="@item.Id" asp-route-subCatId="@item.SubCategoryId" asp-route-catId="@item.CategoryId" class="btn btn-info proedit-btn">View details</a>
+
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+       
+    </div>
+   
+
+

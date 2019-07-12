@@ -1,0 +1,114 @@
+﻿@model IEnumerable<SalesApp.Models.Order>
+@inject SalesApp.Data.ApplicationDbContext _context
+
+@{
+    ViewData["Title"] = "Print";
+    Layout = "~/Views/Shared/_LayoutPrint.cshtml";
+}
+<link href="~/css/site2.css" rel="stylesheet" />
+@*<script type="text/javascript">
+    /**/
+    window.onload = function () { window.print(); }
+    /**/</script>*@
+
+
+
+
+<div id="printableArea">
+    <center>
+        <div class="">
+            <a href="#" style="text-align:center"><img class="img-fluid" src="~/images/ms-logo.png" style="width:160px;margin-left:auto;margin-right:auto" alt=""></a>
+        </div>
+
+
+    </center>
+
+    <div>
+        <div>
+            <h4>
+                Receipt No: @if (Model.Count() > 0)
+                {
+                    <input type="text" name="n1" id="n1" onkeyup="sync()" value="@Model.FirstOrDefault().ReceiptNumber" style="border: none;" readonly>
+                }
+            </h4>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Customer Name" id="customername" style="border:none"><br />
+                <input type="text" name="receiptnumber" id="d1" onkeyup="sync2()" onchange="sync2()" class="form-control" style="border:none" />
+
+
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-condensed" >
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>SubTotal</th>
+        </tr>
+
+        @foreach (var prod in Model.OrderByDescending(s => s.Id))
+        {
+            var getproduct = _context.Products.FirstOrDefault(x => x.Id == prod.ProductId);
+            var subt = prod.Quantity * getproduct.SalingPrice;
+
+            <tr >
+                <td style="text-wrap:none;overflow:hidden;">@getproduct.Name</td>
+
+                <td>@getproduct.SalingPrice</td>
+
+                <td>
+                    <div style="display:flex">
+
+
+                        <div style="margin-left:3px;margin-right:3px;font-size:1.5em; padding-left:3px;padding-right:3px">@prod.Quantity</div>
+
+                    </div>
+                </td>
+                <td>@subt</td>
+
+            </tr>
+
+        }
+
+        <tr >
+            <td></td>
+            <td></td>
+            <td>Total: </td>
+            <td>
+                @if (Model.Count() > 0)
+                {
+
+                    <input type="text" name="total" id="total" readonly style="border:none;font-size:18px;width:70px" value="@Model.Sum(x => x.Amount)" />
+                }
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>Discount: </td>
+            <td> <input type="text" name="discount" id="d2" readonly style="border:none;font-size:18px;width:70px" value="0" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>Payable: </td>
+            <td>
+                @if (Model.Count() > 0)
+                {
+
+                    <input type="text" name="Payable" id="payable" readonly style="border:none;font-size:18px;width:70px" value="@Model.Sum(x => x.Amount)" />
+                }
+            </td>
+            <td></td>
+        </tr>
+    </table>
+    <div id="legalcopy">
+        <p class="legal">
+            <strong>Thank you for your business!</strong>  Payment is expected within 31 days; please process this invoice within that time. There will be a 5% interest charge per month on late invoices.
+        </p>
+    </div>
+</div>

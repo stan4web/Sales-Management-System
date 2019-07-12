@@ -1,0 +1,112 @@
+﻿@model IEnumerable<SalesApp.Models.Product>
+@inject SalesApp.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "Index";
+    int sn = 1;
+}
+
+    <div class="col-lg-10">
+        <div class="card-box">
+            <div class="card-block">
+                <h4 class="card-title">Product List</h4>
+                <div class="table-responsive">
+                    <table class="table m-b-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Quantity)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.PurchasePrice)
+                                </th>
+                                <th>
+                                    Selling Price
+                                </th>
+                                <th>Status</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ReOrderLevel)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ExpirationDate)
+                                </th>
+
+                                <th>
+                                    SubCategory
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Category)
+                                </th>
+
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var subcat = _context.SubCategories.FirstOrDefault(x => x.Id == item.SubCategoryId);
+                            <tr>
+                                <td>@(sn++)</td>
+                                <td>
+                                    <img src="~/Uploads/Products/@(System.IO.Path.GetFileName(item.ImageUrl))" style="width:70px" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Quantity)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PurchasePrice)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SalingPrice)
+                                </td>
+                                <td>
+                                    @if (item.Quantity > item.ReOrderLevel)
+                                    {
+                                        <span class="badge badge-success-border">In Stock</span>
+                                    }
+                                    else if (item.Quantity <= item.ReOrderLevel)
+                                    {
+                                        <span class="badge badge-warning-border">Low Stock</span>
+                                    }
+                                    else if (item.Quantity == 0)
+                                    {
+                                        <span class="badge badge-danger-border">Out of Stock</span>
+                                    }
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ReOrderLevel)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ExpirationDate)
+                                </td>
+
+                                <td>
+                                    @subcat.Name
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Category.Name)
+                                </td>
+
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                </td>
+                            </tr>
+                            }
+                            
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>

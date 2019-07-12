@@ -1,0 +1,168 @@
+﻿@model IEnumerable<SalesApp.Models.Sale>
+@inject SalesApp.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "InvoiceView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int sn = 1;
+    string receiptNo= ViewBag.ReceiptNo;
+    decimal discount = 0;
+    var accountStatement = _context.AccountStatements.FirstOrDefault(x => x.ReceiptNumber == receiptNo);
+    if(accountStatement != null)
+    {
+        discount = accountStatement.Discount;
+        ViewBag.TotalDue = accountStatement.TotalAmount;
+        var userdetails = _context.Users.FirstOrDefault(x => x.Id == accountStatement.CashierName);
+        if (userdetails != null)
+        {
+            ViewBag.CashierName = userdetails.Fullname;
+            ViewBag.CashierPhoneNo = userdetails.PhoneNumber;
+            ViewBag.CashierEmail = userdetails.Email;
+        }
+    }
+}
+
+    <div class="content container-fluid">
+        <div class="row">
+            <div class="col-sm-5 col-4">
+                <h4 class="page-title">Invoice</h4>
+            </div>
+            <div class="col-sm-7 col-8 text-right m-b-30">
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-white">CSV</button>
+                    <button class="btn btn-white">PDF</button>
+                    <button class="btn btn-white"><i class="fa fa-print fa-lg"></i> Print</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6 m-b-20">
+                                <img src="assets/img/logo2.png" class="inv-logo" alt="">
+                                <ul class="list-unstyled">
+                                    <li>Multiskills Nigeria</li>
+                                    <li>13A Bishop demire street,</li>
+                                    <li>GRA phase II,</li>
+                                    <li>Port harcourt.</li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6 m-b-20">
+                                <div class="invoice-details">
+                                    <h3 class="text-uppercase">@receiptNo</h3>
+                                    <ul class="list-unstyled">
+                                        <li>Date: <span>@String.Format("{0:ddd, MMM d, yyyy}", accountStatement.DateCreated)</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-9 m-b-20">
+                                <h5>Issued By:</h5>
+                                <ul class="list-unstyled">
+                                    <li>
+                                        <h5><strong>@ViewBag.CashierName</strong></h5>
+                                    </li>
+                                    <li>@ViewBag.CashierPhoneNo</li>
+                                    <li><a href="#"><span class="__cf_email__">@ViewBag.CashierEmail </span></a></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6 col-lg-3 m-b-20">
+                                <span class="text-muted">Payment Details:</span>
+                                <ul class="list-unstyled invoice-payment-details">
+                                    <li>
+                                        <h5>Total Due: <span class="text-right">@String.Format("{0:C}", ViewBag.TotalDue)</span></h5>
+                                    </li>
+                                    <li>Payment Type: <span>Cash/Transfer/POS</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>ITEM</th>
+                                        <th>UNIT COST</th>
+                                        <th>QUANTITY</th>
+                                        <th>TOTAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   
+                                    @foreach (var item in Model)
+                                    {
+                                        decimal total = item.SalingPrice * item.Quantity;
+                                        <tr>
+                                            <td>@(sn++)</td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ProductName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.SalingPrice)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Quantity)
+                                            </td>
+                                            <td>
+                                                @total
+                                            </td>
+                                            
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <div class="row invoice-payment">
+                                <div class="col-sm-7">
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="m-b-20">
+                                        <h6>Total due</h6>
+                                        <div class="table-responsive no-border">
+                                            <table class="table m-b-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Subtotal:</th>
+                                                        <td class="text-right">
+                                                            @if (Model.Count() > 0)
+                                                            {
+                                                                <strong>@String.Format("{0:C}", Model.Sum(d => d.SalingPrice * d.Quantity)) </strong>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Discount: <span class="text-regular"></span></th>
+                                                        <td class="text-right">@String.Format("{0:C}", discount)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total:</th>
+                                                        <td class="text-right text-primary">
+                                                            <h5>
+                                                                @if (Model.Count() > 0)
+                                                                {
+                                                                    <strong>@String.Format("{0:C}", Model.Sum(d => d.SalingPrice * d.Quantity)-discount) </strong>
+                                                                }
+                                                            </h5>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="invoice-info">
+                                <h5>Other information</h5>
+                                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed dictum ligula, cursus blandit risus. Maecenas eget metus non tellus dignissim aliquam ut a ex. Maecenas sed vehicula dui, ac suscipit lacus. Sed finibus leo vitae lorem interdum, eu scelerisque tellus fermentum. Curabitur sit amet lacinia lorem. Nullam finibus pellentesque libero, eu finibus sapien interdum vel</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+

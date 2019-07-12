@@ -1,0 +1,48 @@
+﻿.page {
+    width: 220mm;
+    min-height: 100mm;
+    max-height: 400mm;
+    padding: 1.5mm;
+    margin: 10mm auto;
+    border: 3px #f59797 solid;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#printableArea {
+    width: 100mm;
+    max-height: 110mm;
+    min-height: 190mm;
+    padding: 1.5mm;
+    margin: 15mm auto;
+    border: 3px #f59797 solid;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    
+}
+
+@media print {
+    html, body {
+        /*width: 210mm;*/
+        /*height: 297mm;*/
+        /*margin-left: 5px;*/
+    }
+
+    .page {
+        width: 220mm;
+        min-height: 200mm;
+        max-height: 200mm;
+        padding: 1.5mm;
+        margin: 10mm auto;
+        border: 3px #f59797 solid;
+        border-radius: 5px;
+        background: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .less {
+        display: none
+    }
+}

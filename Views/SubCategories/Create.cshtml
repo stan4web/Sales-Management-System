@@ -1,0 +1,73 @@
+﻿@model SalesApp.Models.SubCategory
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h4 class="page-title">Add Sub Category</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <form asp-action="Create" asp-controller="SubCategories" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="CategoryId" class="control-label">Category</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label">Sub Category Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                
+                
+                <div class="form-group">
+                    <label>Product Images</label>
+                    <div>
+                        <input class="form-control" type="file" name="file" onchange="readURL(this);">
+                        <small class="form-text text-muted">Max. file size: 50 MB. Allowed images: jpg, gif, png. Maximum 10 images only.</small>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-3 col-sm-3 col-4 col-lg-3 col-xl-2">
+                            <div class="product-thumbnail">
+                                <img id="blah" src="~/assets/img/placeholder-thumb.jpg" class="img-thumbnail img-fluid" alt="">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="m-t-20 text-center">
+                    <button class="btn btn-primary btn-lg">Publish Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah')
+                        .attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

@@ -1,0 +1,89 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_LayoutLogin";
+}
+
+    <div class="account-page">
+        <div class="container">
+            <h3 class="account-title">Create new account</h3>
+            <div class="account-box">
+                <div class="account-wrapper">
+                    <div class="account-logo">
+                        <a href="index.html"><img src="~/images/ms-logo.png" alt="Preadmin"></a>
+                    </div>
+                    <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" enctype="multipart/form-data" >
+                        <div asp-validation-summary="All" class="text-danger"></div><br />
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Username</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Email</label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Password</label>
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-focus">
+                            <label class="focus-label">First name</label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Last name</label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Contact address</label>
+                            <textarea asp-for="ContactAddress" class="form-control"></textarea>
+                            <span asp-validation-for="ContactAddress" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-4">
+                                <div class="product-thumbnail">
+                                    <img id="blah" src="~/assets/img/placeholder-thumb.jpg" class="img-thumbnail img-fluid" width="70" alt="">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Passport photograph</label>
+                            <input class="form-control" type="file" name="file" onchange="readURL(this);">
+                            <small class="form-text text-muted">Max. file size: 50 MB. Allowed images: jpg, gif, png. Maximum 10 images only.</small>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary btn-block account-btn" type="submit">Register</button>
+                        </div>
+                        <div class="text-center">
+                            <a asp-action="Login">Already have an account?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah')
+                        .attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

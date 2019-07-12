@@ -1,0 +1,62 @@
+﻿@model IEnumerable<SalesApp.Models.SubCategory>
+@inject SalesApp.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "Subcategory";
+    Layout = "_PosLayout";
+}
+
+
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-sm-4 col-4">
+            <h4 class="page-title">Products SubCategories</h4>
+        </div>
+        <div class="col-sm-8 col-8 text-right m-b-20">
+            <a asp-action="Index" asp-controller="POS" class="btn btn-primary btn-rounded pull-right"><i class="fa fa-mail-reply"></i> back to categories</a>
+           
+        </div>
+    </div>
+
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            var product = _context.Products.Where(x => x.SubCategoryId == item.Id);
+
+            var subcategory = _context.SubCategories.Where(x => x.CategoryId == item.Id);
+
+            if (product.Count() > 0)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="product">
+                        <div class="product-inner">
+                            <a asp-action="ProductList" asp-controller="POS" asp-route-subCatId="@item.Id">
+                                <img alt="alt" src="~/Uploads/SubCategories/@(System.IO.Path.GetFileName(item.ImageUrl))" style="height:230px">
+                            </a>
+                        </div>
+                        <div class="pro-desc">
+                            <h5 style="font-size:18px"><a asp-action="ProductList" asp-controller="POS" asp-route-subCatId="@item.Id">@product.Count() items  </a></h5>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="product">
+                        <div class="product-inner">
+                            <a asp-action="ProductList" asp-controller="POS" asp-route-catId="@item.CategoryId">
+                                <img alt="alt" src="~/Uploads/SubCategories/@(System.IO.Path.GetFileName(item.ImageUrl))" style="height:230px">
+                            </a>
+                        </div>
+                        <div class="pro-desc">
+                            <h5 style="font-size:18px"><a asp-action="ProductList" asp-controller="POS" asp-route-catId="@item.CategoryId">@product.Count() items  </a></h5>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+        }
+    </div>
+</div>
